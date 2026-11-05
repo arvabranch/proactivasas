@@ -1,0 +1,219 @@
+---
+import { Image } from "astro:assets";
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import Waveform from "../components/Waveform.astro";
+import ServiceCard from "../components/ServiceCard.astro";
+import CtaBand from "../components/CtaBand.astro";
+import { SITE, YEARS, waLink } from "../data/site";
+import { SERVICIOS } from "../data/servicios";
+import heroImg from "../assets/img/planta-2.jpg";
+import tallerImg from "../assets/img/planta-1.jpg";
+import plantaImg from "../assets/img/slide-1.jpg";
+
+const pilares = [
+  { t: "Preventivo", d: "Programas de mantenimiento L.E.M.O.P.I. a maquinaria y equipos, con postulados TPM.", icon: "calendar" },
+  { t: "Predictivo", d: "Vibraciones, termografía y pruebas de resonancia para anticipar fallas antes de que ocurran.", icon: "activity" },
+  { t: "Proactivo", d: "Corregimos la causa raíz: balanceo, alineación láser y fabricación de ventiladores y rotores.", icon: "wrench" },
+];
+---
+<Base
+  title="Proactiva | Mantenimiento predictivo industrial en Cali desde 1990"
+  description="Balanceo dinámico, alineación láser, análisis de vibraciones, termografía y fabricación de ventiladores industriales en Cali. Más de 35 años al servicio de la industria."
+>
+  <!-- HERO -->
+  <section class="hero dark" aria-labelledby="hero-title">
+    <div class="hero-bg">
+      <Image src={heroImg} alt="" widths={[640, 1024, 1600, 2400]} sizes="100vw" loading="eager" fetchpriority="high" />
+    </div>
+    <div class="container hero-inner">
+      <p class="eyebrow">Mantenimiento predictivo · Cali, Colombia</p>
+      <h1 id="hero-title">Sus máquinas avisan antes de fallar. <span class="hl">Nosotros sabemos escucharlas.</span></h1>
+      <p class="hero-lead">
+        Desde {SITE.founded} ayudamos a la industria a evitar paradas con balanceo dinámico, alineación láser,
+        análisis de vibraciones, termografía y ventiladores industriales fabricados a la medida.
+      </p>
+      <div class="btn-row">
+        <a class="btn btn--glass" href={waLink()} target="_blank" rel="noopener" data-track="whatsapp_hero">
+          <Icon name="whatsapp" /> Contáctenos
+        </a>
+        <a class="btn btn--ghost" href="/servicios/">Ver servicios <Icon name="arrow" /></a>
+      </div>
+    </div>
+    <Waveform class="hero-wave" />
+  </section>
+
+  <!-- DATOS -->
+  <section class="stats" aria-label="Proactiva en cifras">
+    <div class="container stats-grid">
+      <div data-reveal style="--i:0"><strong>{YEARS}+</strong><span>años al servicio de la industria</span></div>
+      <div data-reveal style="--i:1"><strong>0,01 mm</strong><span>de precisión en alineación láser</span></div>
+      <div data-reveal style="--i:2"><strong>5</strong><span>especialidades técnicas</span></div>
+      <div data-reveal style="--i:3"><strong>En sitio</strong><span>balanceo a velocidad real de operación</span></div>
+    </div>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section class="section" aria-labelledby="servicios-title">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <p class="eyebrow">Servicios</p>
+          <h2 id="servicios-title">Somos su soporte técnico en mantenimiento predictivo</h2>
+        </div>
+        <a class="link-arrow" href="/servicios/">Todos los servicios <Icon name="arrow" /></a>
+      </div>
+      <div class="svc-grid">
+        {SERVICIOS.map((s, i) => <ServiceCard s={s} i={i} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- PILARES -->
+  <section class="section section--alt" aria-labelledby="pilares-title">
+    <div class="container pilares">
+      <div class="pilares-media" data-reveal>
+        <Image src={tallerImg} alt="Técnico de Proactiva probando un ventilador axial en el taller" widths={[480, 800, 1200]} sizes="(min-width: 960px) 520px, 92vw" />
+        <Image class="pilares-media-2" src={plantaImg} alt="Ducto y ventilador industrial en planta atendidos por Proactiva" widths={[320, 480]} sizes="240px" />
+      </div>
+      <div>
+        <p class="eyebrow">Nuestra forma de trabajar</p>
+        <h2 id="pilares-title">Preventivo. Predictivo. Proactivo.</h2>
+        <p class="lead">
+          No esperamos a que algo se rompa. Medimos, entendemos la causa y la corregimos, para que sus equipos
+          cumplan la vida útil para la que fueron diseñados.
+        </p>
+        <ul class="pilares-list">
+          {pilares.map((p, i) => (
+            <li data-reveal style={`--i:${i}`}>
+              <span class="icon-badge"><Icon name={p.icon} /></span>
+              <div><h3>{p.t}</h3><p>{p.d}</p></div>
+            </li>
+          ))}
+        </ul>
+        <a class="link-arrow" href="/historia/">Conozca nuestra historia <Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTOS -->
+  <section class="section" aria-labelledby="prod-title">
+    <div class="container prod">
+      <div>
+        <p class="eyebrow">Fabricación propia desde 2019</p>
+        <h2 id="prod-title">Ventiladores industriales y rotores hechos para su proceso</h2>
+        <p class="lead">
+          Seleccionamos y diseñamos cualquier tipo de ventilador. Construimos rotores para condiciones severas
+          de temperatura, gases y sólidos, y cada equipo se pone en marcha bajo parámetros de vibración mínima.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn--primary" href="/productos/">Ver productos <Icon name="arrow" /></a>
+          <a class="btn btn--ghost" href="/servicios/ventiladores-industriales/">Servicio de ventiladores</a>
+        </div>
+      </div>
+      <ul class="prod-list">
+        {["Ventiladores generales y heavy duty", "Rotores de repuesto", "Dampers tipo persiana", "Juntas flexibles", "Válvulas rotativas (rotoesclusas)"].map((p, i) => (
+          <li data-reveal style={`--i:${i}`}><Icon name="check" />{p}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: min(88svh, 820px);
+    display: flex;
+    align-items: center;
+    padding: clamp(5rem, 12vw, 8rem) 0 clamp(7rem, 14vw, 10rem);
+  }
+  .hero-bg { position: absolute; inset: 0; z-index: -1; }
+  .hero-bg :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 70% 30%; }
+  .hero-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgb(7 16 23 / 0.94) 0%, rgb(7 16 23 / 0.78) 45%, rgb(7 16 23 / 0.35) 100%),
+      linear-gradient(0deg, rgb(7 16 23 / 0.9), transparent 40%);
+  }
+  .hero-inner { max-width: calc(var(--maxw) + var(--gutter) * 2); }
+  .hero h1 { max-width: 19ch; font-size: clamp(2.4rem, 5.2vw, 4.1rem); }
+  .hl { color: var(--green-400); }
+  .hero-lead { max-width: 38rem; margin: 1.5rem 0 2.25rem; font-size: clamp(1.08rem, 1.6vw, 1.25rem); color: var(--label-2); }
+  .hero :global(.hero-wave) { position: absolute; left: 0; right: 0; bottom: 1.5rem; }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-inner > * { animation: rise 900ms var(--ease) both; }
+    .hero-inner > :nth-child(2) { animation-delay: 80ms; }
+    .hero-inner > :nth-child(3) { animation-delay: 160ms; }
+    .hero-inner > :nth-child(4) { animation-delay: 240ms; }
+    .hero-bg :global(img) { animation: zoom 14s ease-out both; }
+  }
+  @keyframes rise { from { transform: translateY(18px); } }
+  @keyframes zoom { from { transform: scale(1.08); } }
+
+  .stats { margin-top: -3rem; position: relative; z-index: 2; }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    padding: 0;
+    overflow: hidden;
+    border-radius: var(--radius-l);
+    background: var(--separator);
+    box-shadow: var(--shadow);
+    max-width: calc(var(--maxw));
+    width: calc(100% - var(--gutter) * 2);
+  }
+  .stats-grid > div { display: grid; gap: 0.3rem; padding: 1.4rem 1.25rem; background: var(--surface); }
+  .stats strong { font-family: var(--font-display); font-size: clamp(1.7rem, 3.5vw, 2.4rem); line-height: 1; color: var(--label); }
+  .stats span { font-size: 0.9rem; color: var(--label-3); line-height: 1.35; }
+  @media (min-width: 860px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } .stats-grid > div { padding: 1.9rem 1.75rem; } }
+
+  .split { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem; max-width: none; }
+  .split > div { max-width: 40rem; }
+
+  .svc-grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+
+  .lead { margin: 1.1rem 0 1.75rem; color: var(--label-2); font-size: 1.12rem; }
+
+  .pilares { display: grid; gap: clamp(2.5rem, 6vw, 5rem); align-items: center; }
+  .pilares-media { position: relative; padding-bottom: 3rem; }
+  .pilares-media > :global(img:first-child) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius-l); box-shadow: var(--shadow); }
+  .pilares-media :global(.pilares-media-2) {
+    position: absolute;
+    right: -0.5rem;
+    bottom: 0;
+    width: 42%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 5px solid var(--surface-2);
+    box-shadow: var(--shadow);
+  }
+  .pilares-list { list-style: none; margin: 0 0 1.75rem; padding: 0; display: grid; gap: 1.25rem; }
+  .pilares-list li { display: flex; gap: 1rem; }
+  .pilares-list h3 { font-size: 1.25rem; margin-bottom: 0.2rem; }
+  .pilares-list p { color: var(--label-2); font-size: 0.98rem; }
+  @media (min-width: 960px) { .pilares { grid-template-columns: 1fr 1fr; } }
+
+  .prod { display: grid; gap: 2.5rem; align-items: center; }
+  .prod-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+  .prod-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 1.1rem 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--separator);
+    border-radius: var(--radius);
+    font-weight: 600;
+  }
+  .prod-list :global(svg) { flex: none; width: 26px; height: 26px; padding: 4px; border-radius: 50%; background: var(--green-500); color: var(--on-accent); }
+  @media (min-width: 960px) { .prod { grid-template-columns: 1.1fr 0.9fr; } }
+</style>

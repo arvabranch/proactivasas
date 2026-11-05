@@ -1,0 +1,266 @@
+---
+import Logo from "./Logo.astro";
+import Icon from "./Icon.astro";
+import { NAV, SITE, waLink } from "../data/site";
+import { SERVICIOS } from "../data/servicios";
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
+---
+<header class="site-header" data-header>
+  <div class="container bar">
+    <a href="/" class="brand" aria-label={`${SITE.legalName}, ir al inicio`}>
+      <Logo height={60} />
+    </a>
+
+    <nav class="nav-desktop" aria-label="Principal">
+      <ul>
+        {NAV.map((item) => (
+          <li class:list={[{ "has-menu": item.href === "/servicios/" }]}>
+            <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>{item.label}</a>
+            {item.href === "/servicios/" && (
+              <div class="mega" role="group" aria-label="Servicios">
+                {SERVICIOS.map((s) => (
+                  <a href={`/servicios/${s.slug}/`} class="mega-item">
+                    <span class="icon-badge"><Icon name={s.icon} /></span>
+                    <span>
+                      <strong>{s.corto}</strong>
+                      <small>{s.dato.etiqueta}</small>
+                    </span>
+                  </a>
+                ))}
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <a class="btn btn--glass cta-desktop" href={waLink()} target="_blank" rel="noopener" data-track="whatsapp_header">
+      <Icon name="whatsapp" /> Contáctenos
+    </a>
+
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-btn>
+      <span class="sr-only">Abrir menú</span>
+      <Icon name="menu" class="i-open" />
+      <Icon name="x" class="i-close" />
+    </button>
+  </div>
+
+  <div id="mobile-menu" class="mobile-menu" data-menu hidden>
+    <nav aria-label="Menú móvil" class="container">
+      <ul class="m-list">
+        {NAV.map((item, i) => (
+          <li style={`--i:${i}`}>
+            <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+              {item.label}<Icon name="arrow" size={20} />
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="m-label">Servicios</p>
+      <ul class="m-services">
+        {SERVICIOS.map((s) => (
+          <li><a href={`/servicios/${s.slug}/`}><Icon name={s.icon} size={20} />{s.corto}</a></li>
+        ))}
+      </ul>
+      <div class="m-cta">
+        <a class="btn btn--primary" href={waLink()} target="_blank" rel="noopener" data-track="whatsapp_menu">
+          <Icon name="whatsapp" /> Escríbanos por WhatsApp
+        </a>
+        <a class="btn btn--ghost" href={`tel:${SITE.phoneE164}`}><Icon name="phone" /> Llamar</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>("[data-header]")!;
+  const btn = header.querySelector<HTMLButtonElement>("[data-menu-btn]")!;
+  const menu = header.querySelector<HTMLElement>("[data-menu]")!;
+
+  const setOpen = (open: boolean) => {
+    btn.setAttribute("aria-expanded", String(open));
+    btn.querySelector(".sr-only")!.textContent = open ? "Cerrar menú" : "Abrir menú";
+    header.toggleAttribute("data-open", open);
+    document.documentElement.classList.toggle("no-scroll", open);
+    if (open) {
+      menu.hidden = false;
+      menu.querySelector<HTMLAnchorElement>("a")?.focus({ preventScroll: true });
+    } else {
+      menu.hidden = true;
+    }
+  };
+
+  btn.addEventListener("click", () => setOpen(btn.getAttribute("aria-expanded") !== "true"));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && header.hasAttribute("data-open")) { setOpen(false); btn.focus(); }
+  });
+  matchMedia("(min-width: 960px)").addEventListener("change", (e) => e.matches && setOpen(false));
+
+  // Sombra del header al hacer scroll
+  const onScroll = () => header.toggleAttribute("data-scrolled", scrollY > 8);
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+</script>
+
+<style>
+  /* backdrop-filter crea un bloque contenedor para hijos fixed: se quita con el menú abierto */
+  .site-header[data-open] {
+    background: var(--bg);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(18px);
+    backdrop-filter: saturate(180%) blur(18px);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .site-header { background: var(--bg); }
+  }
+  .site-header[data-scrolled] { border-color: var(--separator); box-shadow: 0 6px 24px -18px rgb(0 0 0 / 0.4); }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    min-height: var(--header-h);
+  }
+  .brand { display: block; margin-right: auto; padding: 0.35rem 0; text-decoration: none; }
+  .brand :global(.logo) { height: 46px; width: auto; }
+  @media (min-width: 1100px) { .brand :global(.logo) { height: 58px; } }
+
+  .nav-desktop { display: none; }
+  .nav-desktop ul { display: flex; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
+  .nav-desktop li { position: relative; }
+  .nav-desktop > ul > li > a {
+    display: block;
+    padding: 0.55rem 0.85rem;
+    border-radius: 999px;
+    font-weight: 500;
+    font-size: 0.97rem;
+    color: var(--label-2);
+    text-decoration: none;
+    transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  }
+  .nav-desktop > ul > li > a:hover { color: var(--label); background: rgb(127 127 127 / 0.1); }
+  .nav-desktop a[aria-current="page"] { color: var(--label); font-weight: 600; }
+  .nav-desktop > ul > li > a[aria-current="page"]::after {
+    content: "";
+    display: block;
+    height: 2px;
+    margin-top: 2px;
+    border-radius: 2px;
+    background: var(--green-500);
+  }
+
+  .mega {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    width: 560px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+    padding: 0.6rem;
+    background: var(--surface);
+    border: 1px solid var(--separator);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, 6px);
+    transition: opacity 200ms var(--ease), transform 200ms var(--ease), visibility 200ms;
+  }
+  .mega::before { content: ""; position: absolute; inset: -12px 0 auto; height: 12px; }
+  .has-menu:hover .mega,
+  .has-menu:focus-within .mega { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+  .mega-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: background-color 200ms var(--ease);
+  }
+  .mega-item:hover { background: var(--surface-2); }
+  .mega-item strong { display: block; font-size: 0.97rem; }
+  .mega-item small { color: var(--label-3); font-size: 0.82rem; }
+  .mega-item .icon-badge { width: 40px; height: 40px; border-radius: 11px; }
+  .mega-item .icon-badge :global(svg) { width: 20px; height: 20px; }
+
+  .cta-desktop { display: none; min-height: 44px; padding-inline: 1.15rem; }
+
+  .menu-btn {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    margin-right: -0.5rem;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--label);
+    cursor: pointer;
+  }
+  .menu-btn :global(.i-close), [data-open] .menu-btn :global(.i-open) { display: none; }
+  [data-open] .menu-btn :global(.i-close) { display: block; }
+
+  .mobile-menu {
+    position: fixed;
+    inset: var(--header-h) 0 0;
+    overflow-y: auto;
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+    background: var(--bg);
+    animation: sheet 320ms var(--ease);
+  }
+  @keyframes sheet { from { opacity: 0; transform: translateY(-8px); } }
+  .m-list, .m-services { list-style: none; margin: 0; padding: 0; }
+  .m-list li { border-bottom: 1px solid var(--separator); animation: sheet 400ms var(--ease) both; animation-delay: calc(var(--i) * 35ms); }
+  .m-list a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.05rem 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.6rem;
+    text-decoration: none;
+  }
+  .m-list a[aria-current="page"] { color: var(--accent); }
+  .m-label {
+    margin: 1.75rem 0 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--label-3);
+  }
+  .m-services { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .m-services a {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 48px;
+    padding: 0.6rem 0.75rem;
+    border-radius: 12px;
+    background: var(--surface-2);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .m-services :global(svg) { color: var(--accent); flex: none; }
+  .m-cta { display: grid; gap: 0.6rem; margin-top: 1.75rem; }
+
+  @media (min-width: 960px) {
+    .nav-desktop, .cta-desktop { display: inline-flex; }
+    .menu-btn, .mobile-menu { display: none !important; }
+  }
+</style>

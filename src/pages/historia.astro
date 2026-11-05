@@ -1,0 +1,120 @@
+---
+import { Image } from "astro:assets";
+import Base from "../layouts/Base.astro";
+import PageHero from "../layouts/PageHero.astro";
+import Icon from "../components/Icon.astro";
+import CtaBand from "../components/CtaBand.astro";
+import { SITE, YEARS } from "../data/site";
+import foto1 from "../assets/img/planta-2.jpg";
+import foto2 from "../assets/img/slide-1.jpg";
+
+// TODO: completar con hitos reales que entregue Proactiva (fundador, clientes iniciales, certificaciones…).
+const hitos = [
+  { y: String(SITE.founded), t: "Nace Proactiva", d: "Comenzamos a prestar servicios técnicos de mantenimiento a la industria desde Cali." },
+  { y: "Hoy", t: "Mantenimiento predictivo", d: "Balanceo dinámico, alineación láser, análisis de vibraciones, termografía y programas preventivos con TPM." },
+  { y: "2019", t: "Fabricación de ventiladores", d: "Iniciamos la fabricación de ventiladores industriales generales y heavy duty, y de rotores de repuesto." },
+];
+
+const valores = [
+  { t: "Precisión", d: "Medimos antes de opinar. Las decisiones se toman con datos, no con suposiciones.", icon: "crosshair" },
+  { t: "Experiencia", d: `${YEARS}+ años resolviendo problemas reales en plantas industriales.`, icon: "shield" },
+  { t: "Cercanía", d: "Somos de Cali y estamos cerca de su planta cuando nos necesita.", icon: "pin" },
+];
+---
+<Base
+  title="Historia | Proactiva, mantenimiento industrial en Cali desde 1990"
+  description={`Proactiva acompaña a la industria desde ${SITE.founded} con mantenimiento preventivo, predictivo y proactivo, y fabricación de ventiladores industriales en Cali.`}
+>
+  <PageHero
+    crumb="Historia"
+    eyebrow={`Desde ${SITE.founded}`}
+    title={`Más de ${YEARS} años al servicio de la industria`}
+    lead="Preventivo, predictivo y proactivo: tres palabras que resumen cómo cuidamos los equipos de nuestros clientes."
+  />
+
+  <section class="section">
+    <div class="container story">
+      <div class="story-media" data-reveal>
+        <Image src={foto1} alt="Técnico de Proactiva alineando un acople con equipo láser en planta" widths={[480, 800, 1200]} sizes="(min-width: 980px) 540px, 92vw" />
+      </div>
+      <div>
+        <p class="eyebrow">Quiénes somos</p>
+        <h2>Su soporte técnico en mantenimiento predictivo</h2>
+        <p class="body">
+          {SITE.legalName} nació en {SITE.founded} para servir a la industria en general. Con los años sumamos técnicas
+          predictivas como el análisis de vibraciones, la termografía y la alineación láser, y en 2019 empezamos a fabricar
+          ventiladores industriales y rotores de repuesto.
+        </p>
+        <p class="body">
+          Nuestra meta es simple: que cada equipo cumpla la vida útil para la que fue diseñado, con menos paradas y menos
+          costos de mantenimiento.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Trayectoria</p>
+        <h2>Nuestro camino</h2>
+      </div>
+      <ol class="tl">
+        {hitos.sort((a, b) => (a.y === "Hoy" ? 1 : b.y === "Hoy" ? -1 : Number(a.y) - Number(b.y))).map((h, i) => (
+          <li data-reveal style={`--i:${i}`}>
+            <span class="tl-y">{h.y}</span>
+            <div><h3>{h.t}</h3><p>{h.d}</p></div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Lo que nos define</p>
+        <h2>Cómo trabajamos</h2>
+      </div>
+      <div class="vals">
+        {valores.map((v, i) => (
+          <div class="val card" data-reveal style={`--i:${i}`}>
+            <span class="icon-badge"><Icon name={v.icon} /></span>
+            <h3>{v.t}</h3>
+            <p>{v.d}</p>
+          </div>
+        ))}
+      </div>
+      <figure class="wide" data-reveal>
+        <Image src={foto2} alt="Equipo de Proactiva junto a un sistema de ventilación industrial en planta" widths={[640, 1024]} sizes="(min-width: 1200px) 1200px, 92vw" />
+      </figure>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .story { display: grid; gap: 2.5rem; align-items: center; }
+  .story-media :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius-l); box-shadow: var(--shadow); }
+  .story h2 { margin-bottom: 1.25rem; }
+  .body { color: var(--label-2); font-size: 1.1rem; }
+  .body + .body { margin-top: 1rem; }
+  @media (min-width: 980px) { .story { grid-template-columns: 1fr 1fr; gap: 4.5rem; } }
+
+  .tl { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; max-width: 46rem; }
+  .tl li { position: relative; display: grid; grid-template-columns: 5.5rem 1fr; gap: 1.25rem; padding: 0 0 2.25rem; }
+  .tl li::before { content: ""; position: absolute; left: 6.6rem; top: 0.5rem; bottom: 0; width: 2px; background: var(--separator); }
+  .tl li:last-child::before { display: none; }
+  .tl li::after { content: ""; position: absolute; left: calc(6.6rem - 5px); top: 0.4rem; width: 12px; height: 12px; border-radius: 50%; background: var(--green-500); box-shadow: 0 0 0 4px var(--surface-2); }
+  .tl-y { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; line-height: 1.2; color: var(--accent); }
+  .tl li > div { padding-left: 1.75rem; }
+  .tl h3 { margin-bottom: 0.3rem; }
+  .tl p { color: var(--label-2); }
+
+  .vals { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+  .val { padding: 1.75rem; display: grid; gap: 0.8rem; align-content: start; }
+  .val p { color: var(--label-2); }
+  .wide { margin: 2.5rem 0 0; }
+  .wide :global(img) { width: 100%; aspect-ratio: 21 / 9; object-fit: cover; border-radius: var(--radius-l); }
+</style>

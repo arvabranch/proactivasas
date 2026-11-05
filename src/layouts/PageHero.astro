@@ -1,0 +1,29 @@
+---
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+interface Props { eyebrow: string; title: string; lead?: string; crumb: string }
+const { eyebrow, title, lead, crumb } = Astro.props;
+---
+<section class="ph dark" aria-labelledby="page-title">
+  <div class="container">
+    <Breadcrumbs items={[{ label: "Inicio", href: "/" }, { label: crumb }]} />
+    <div class="ph-body">
+      <p class="eyebrow">{eyebrow}</p>
+      <h1 id="page-title">{title}</h1>
+      {lead && <p class="ph-lead">{lead}</p>}
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .ph { padding: clamp(2rem, 5vw, 3rem) 0 clamp(3.5rem, 8vw, 5.5rem); background: radial-gradient(70% 100% at 100% 0%, rgb(6 144 57 / 0.16), transparent 60%), var(--ink-950); }
+  .ph-body { margin-top: clamp(1.75rem, 4vw, 3rem); max-width: 50rem; }
+  h1 { font-size: clamp(2.2rem, 5.2vw, 3.9rem); }
+  .ph-lead { margin-top: 1.25rem; color: var(--label-2); font-size: clamp(1.06rem, 1.5vw, 1.22rem); max-width: 40rem; }
+  @media (prefers-reduced-motion: no-preference) {
+    .ph-body > * { animation: rise 800ms var(--ease) both; }
+    .ph-body > :nth-child(2) { animation-delay: 70ms; }
+    .ph-body > :nth-child(3) { animation-delay: 140ms; }
+  }
+  @keyframes rise { from { transform: translateY(16px); } }
+</style>

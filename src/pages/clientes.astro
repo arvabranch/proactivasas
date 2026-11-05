@@ -1,0 +1,100 @@
+---
+import { Image } from "astro:assets";
+import Base from "../layouts/Base.astro";
+import PageHero from "../layouts/PageHero.astro";
+import Icon from "../components/Icon.astro";
+import CtaBand from "../components/CtaBand.astro";
+import { SECTORES, CASOS } from "../data/clientes";
+import logos from "../assets/img/logos.jpg";
+
+const total = SECTORES.reduce((n, s) => n + s.clientes.length, 0);
+---
+<Base
+  title="Clientes | Empresas que confían en Proactiva"
+  description="Ingenios, cementeras, alimentos, energía y manufactura confían en Proactiva para balanceo, alineación láser, análisis de vibraciones y ventiladores industriales."
+>
+  <PageHero
+    crumb="Clientes"
+    eyebrow="Clientes"
+    title="La industria colombiana confía en nosotros"
+    lead={`Más de ${total - (total % 5)} empresas de sectores exigentes han confiado sus equipos críticos a Proactiva.`}
+  />
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Sectores</p>
+        <h2>Experiencia en procesos exigentes</h2>
+        <p>Cada sector tiene sus propios retos: polvo, temperatura, gases, operación continua. Los conocemos de primera mano.</p>
+      </div>
+      <div class="sectores">
+        {SECTORES.map((s, i) => (
+          <article class="sector card" data-reveal style={`--i:${i % 3}`}>
+            <header>
+              <span class="icon-badge"><Icon name={s.icon} /></span>
+              <h3>{s.nombre}</h3>
+            </header>
+            <ul>
+              {s.clientes.map((c) => <li>{c}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {CASOS.length > 0 && (
+    <section class="section section--alt">
+      <div class="container">
+        <div class="section-head"><p class="eyebrow">Casos</p><h2>Resultados reales</h2></div>
+        <div class="casos">
+          {CASOS.map((c) => (
+            <article class="card caso">
+              <p class="eyebrow">{c.sector}</p>
+              <h3>{c.cliente}</h3>
+              <dl>
+                <dt>Reto</dt><dd>{c.reto}</dd>
+                <dt>Solución</dt><dd>{c.solucion}</dd>
+                <dt>Resultado</dt><dd>{c.resultado}</dd>
+              </dl>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="section section--alt">
+    <div class="container logos-wrap">
+      <div>
+        <p class="eyebrow">Algunos de nuestros clientes</p>
+        <h2>Marcas que han trabajado con nosotros</h2>
+        <p class="body">Logos utilizados con fines de referencia comercial. Cada marca pertenece a su respectivo propietario.</p>
+      </div>
+      <figure class="logos card" data-reveal>
+        <Image src={logos} alt={`Logos de clientes de Proactiva: ${SECTORES.flatMap((s) => s.clientes).join(", ")}`} widths={[400, 641]} sizes="(min-width: 980px) 520px, 92vw" />
+      </figure>
+    </div>
+  </section>
+
+  <CtaBand title="¿Quiere que su planta sea la siguiente?" />
+</Base>
+
+<style>
+  .sectores { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+  .sector { padding: 1.6rem; }
+  .sector header { display: flex; gap: 0.9rem; align-items: center; margin-bottom: 1.1rem; }
+  .sector h3 { font-size: 1.2rem; }
+  .sector ul { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; margin: 0; padding: 0; }
+  .sector li { padding: 0.35rem 0.75rem; border-radius: 999px; background: var(--surface-2); font-size: 0.9rem; color: var(--label-2); }
+  .casos { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
+  .caso { padding: 1.75rem; }
+  .caso dt { font-weight: 600; margin-top: 0.9rem; }
+  .caso dd { margin: 0.2rem 0 0; color: var(--label-2); }
+  .logos-wrap { display: grid; gap: 2.5rem; align-items: center; }
+  .logos-wrap h2 { margin-bottom: 1rem; }
+  .body { color: var(--label-3); font-size: 0.95rem; }
+  .logos { margin: 0; padding: 1.5rem; background: #fff; }
+  .logos :global(img) { width: 100%; max-width: 520px; margin-inline: auto; }
+  @media (min-width: 980px) { .logos-wrap { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+</style>

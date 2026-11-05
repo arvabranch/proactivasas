@@ -1,0 +1,32 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import Waveform from "../components/Waveform.astro";
+import { SERVICIOS } from "../data/servicios";
+---
+<Base title="Página no encontrada | Proactiva" description="La página que busca no existe o cambió de dirección." noindex>
+  <section class="nf dark">
+    <div class="container">
+      <p class="eyebrow">Error 404</p>
+      <h1>Esta página se salió de línea</h1>
+      <p class="lead">Es posible que la dirección haya cambiado con el nuevo sitio. Estas páginas le pueden servir:</p>
+      <div class="btn-row">
+        <a class="btn btn--primary" href="/">Ir al inicio <Icon name="arrow" /></a>
+        <a class="btn btn--ghost" href="/servicios/">Ver servicios</a>
+      </div>
+      <ul class="links">
+        {SERVICIOS.map((s) => <li><a href={`/servicios/${s.slug}/`}><Icon name={s.icon} size={18} />{s.corto}</a></li>)}
+      </ul>
+    </div>
+    <Waveform class="nf-wave" />
+  </section>
+</Base>
+
+<style>
+  .nf { position: relative; overflow: hidden; padding: clamp(4rem, 10vw, 7rem) 0 9rem; min-height: 70svh; }
+  .lead { margin: 1.25rem 0 2rem; color: var(--label-2); font-size: 1.15rem; max-width: 36rem; }
+  .links { display: flex; flex-wrap: wrap; gap: 0.5rem; list-style: none; margin: 2.5rem 0 0; padding: 0; }
+  .links a { display: inline-flex; gap: 0.5rem; align-items: center; min-height: 44px; padding: 0 1rem; border-radius: 999px; background: rgb(255 255 255 / 0.06); text-decoration: none; }
+  .links :global(svg) { color: var(--green-400); }
+  .nf :global(.nf-wave) { position: absolute; left: 0; right: 0; bottom: 1rem; }
+</style>

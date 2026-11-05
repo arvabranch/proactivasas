@@ -1,0 +1,360 @@
+---
+import Base from "../../layouts/Base.astro";
+import Icon from "../../components/Icon.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import ServiceCard from "../../components/ServiceCard.astro";
+import Waveform from "../../components/Waveform.astro";
+import Faq from "../../components/Faq.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import { SITE, YEARS, waLink } from "../../data/site";
+import { SERVICIOS, PROBLEMAS } from "../../data/servicios";
+
+const pasos = [
+  { t: "Nos cuenta qué pasa", d: "Por WhatsApp o teléfono: qué equipo es, qué síntomas tiene y desde cuándo.", icon: "whatsapp" },
+  { t: "Medimos en su planta", d: "Vamos al sitio con equipos profesionales y medimos el estado real del equipo.", icon: "gauge" },
+  { t: "Corregimos la causa", d: "Balanceo, alineación o reparación: atacamos el origen del problema, no solo el síntoma.", icon: "wrench" },
+  { t: "Le entregamos el informe", d: "Resultados antes y después, y recomendaciones para que no vuelva a pasar.", icon: "clipboard" },
+];
+
+const complementarios = [
+  {
+    t: "Programas de mantenimiento preventivo",
+    d: "Ejecución de programas L.E.M.O.P.I. a maquinaria y equipos, con postulados TPM.",
+    icon: "calendar",
+  },
+  {
+    t: "Prueba de resonancia a rotores",
+    d: "Prueba de impacto para identificar las frecuencias naturales del rotor, clave al usar variadores de frecuencia.",
+    icon: "activity",
+    href: "/servicios/analisis-de-vibraciones/",
+  },
+  {
+    t: "Mantenimiento general de ventiladores",
+    d: "Revisión, reparación y puesta a punto de ventiladores industriales existentes.",
+    icon: "fan",
+    href: "/servicios/ventiladores-industriales/",
+  },
+  {
+    t: "Fabricación de rotores de repuesto",
+    d: "Rotores para cualquier aplicación bajo condiciones severas de temperatura, gases y sólidos.",
+    icon: "rotate",
+    href: "/productos/",
+  },
+];
+
+const faq = [
+  {
+    q: "¿En qué ciudades prestan servicio?",
+    a: `Estamos en ${SITE.city}, ${SITE.region}, y atendemos plantas en la región. Si su planta está en otra ciudad, escríbanos y revisamos la logística.`,
+  },
+  {
+    q: "¿Cómo sé qué servicio necesita mi equipo?",
+    a: "Cuéntenos los síntomas por WhatsApp. Si no está claro, empezamos con un análisis de vibraciones, que identifica la causa (desbalanceo, desalineación, rodamientos, holguras) y le dice qué corregir.",
+  },
+  {
+    q: "¿Tienen que detener mi producción?",
+    a: "El análisis de vibraciones y la termografía se hacen con los equipos en operación. El balanceo en sitio y la alineación requieren paradas cortas que coordinamos con su programa.",
+  },
+  {
+    q: "¿Entregan informe técnico?",
+    a: "Sí. Cada servicio termina con un informe que incluye las mediciones, el trabajo realizado y las recomendaciones.",
+  },
+];
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITE.url}/` },
+      { "@type": "ListItem", position: 2, name: "Servicios", item: `${SITE.url}/servicios/` },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Servicios de mantenimiento predictivo industrial",
+    itemListElement: SERVICIOS.map((s, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${SITE.url}/servicios/${s.slug}/`,
+      name: s.nombre,
+    })),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  },
+];
+---
+<Base
+  title="Servicios de mantenimiento predictivo industrial en Cali | Proactiva"
+  description="Balanceo dinámico, alineación láser, análisis de vibraciones, termografía y ventiladores industriales en Cali. Soporte técnico en mantenimiento predictivo desde 1990."
+  schema={schema}
+>
+  <!-- HERO -->
+  <section class="hero dark" aria-labelledby="page-title">
+    <div class="container">
+      <Breadcrumbs items={[{ label: "Inicio", href: "/" }, { label: "Servicios" }]} />
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">Servicios</p>
+          <h1 id="page-title">Mantenimiento predictivo para que su planta <span class="hl">no se detenga</span></h1>
+          <p class="hero-lead">
+            Somos su soporte técnico en mantenimiento predictivo. Identificamos problemas mecánicos y eléctricos a tiempo,
+            corregimos la causa y le entregamos recomendaciones claras. {YEARS}+ años en la industria lo respaldan.
+          </p>
+        </div>
+        <nav class="jump" aria-label="Ir a un servicio">
+          {SERVICIOS.map((s, i) => (
+            <a href={`/servicios/${s.slug}/`} style={`--i:${i}`}>
+              <span class="jump-ic"><Icon name={s.icon} size={20} /></span>
+              <span class="jump-txt"><strong>{s.corto}</strong><small>{s.dato.valor} · {s.dato.etiqueta}</small></span>
+              <Icon name="arrow" size={18} class="jump-arrow" />
+            </a>
+          ))}
+        </nav>
+      </div>
+    </div>
+    <Waveform class="hero-wave" />
+  </section>
+
+  <!-- SELECTOR + CATÁLOGO -->
+  <section class="section" aria-labelledby="catalogo-title" id="catalogo">
+    <div class="container">
+      <div class="finder js-only" data-finder>
+        <div class="finder-head">
+          <span class="icon-badge"><Icon name="gauge" /></span>
+          <div>
+            <h2 class="finder-title">¿Qué está pasando con su equipo?</h2>
+            <p>Elija un síntoma y le mostramos qué servicio lo resuelve.</p>
+          </div>
+        </div>
+        <div class="chips" role="group" aria-label="Síntomas">
+          {PROBLEMAS.map((p) => (
+            <button type="button" class="chip" aria-pressed="false" data-problem={p.id} data-services={p.servicios.join(",")}>
+              {p.label}
+            </button>
+          ))}
+        </div>
+        <p class="finder-result" aria-live="polite" data-finder-result></p>
+      </div>
+
+      <div class="section-head">
+        <h2 id="catalogo-title">Nuestros servicios</h2>
+        <p>Cinco especialidades técnicas, cada una con su propia página, para que encuentre exactamente lo que necesita.</p>
+      </div>
+
+      <div class="svc-grid" data-grid>
+        {SERVICIOS.map((s, i) => <ServiceCard s={s} i={i} />)}
+        <aside class="svc-help card" data-reveal style="--i:5">
+          <p class="eyebrow">¿No está seguro?</p>
+          <h3>Cuéntenos el síntoma y le decimos qué hacer</h3>
+          <p>Un técnico revisa su caso y le recomienda el servicio adecuado, sin compromiso.</p>
+          <a class="btn btn--primary" href={waLink("Hola Proactiva, tengo un equipo con un problema y no sé qué servicio necesito.")} target="_blank" rel="noopener" data-track="whatsapp_hub_help">
+            <Icon name="whatsapp" /> Consultar por WhatsApp
+          </a>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPLEMENTARIOS -->
+  <section class="section section--alt" aria-labelledby="comp-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Además</p>
+        <h2 id="comp-title">Programas y servicios complementarios</h2>
+      </div>
+      <div class="comp-grid">
+        {complementarios.map((c, i) => {
+          const Tag = c.href ? "a" : "div";
+          return (
+            <Tag class="comp card" href={c.href} data-reveal style={`--i:${i}`}>
+              <span class="icon-badge"><Icon name={c.icon} /></span>
+              <h3>{c.t}</h3>
+              <p>{c.d}</p>
+              {c.href && <span class="link-arrow">Ver más <Icon name="arrow" /></span>}
+            </Tag>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESO -->
+  <section class="section" aria-labelledby="proceso-title">
+    <div class="container">
+      <div class="section-head section-head--center">
+        <p class="eyebrow">Cómo trabajamos</p>
+        <h2 id="proceso-title">De la señal de alerta a la solución, en cuatro pasos</h2>
+      </div>
+      <ol class="steps">
+        {pasos.map((p, i) => (
+          <li data-reveal style={`--i:${i}`}>
+            <span class="step-n">{String(i + 1).padStart(2, "0")}</span>
+            <span class="icon-badge"><Icon name={p.icon} /></span>
+            <h3>{p.t}</h3>
+            <p>{p.d}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section--alt" aria-labelledby="faq-title">
+    <div class="container faq-wrap">
+      <div class="section-head">
+        <p class="eyebrow">Preguntas frecuentes</p>
+        <h2 id="faq-title">Lo que más nos preguntan</h2>
+      </div>
+      <Faq items={faq} />
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<script>
+  const finder = document.querySelector<HTMLElement>("[data-finder]");
+  const grid = document.querySelector<HTMLElement>("[data-grid]");
+  const result = document.querySelector<HTMLElement>("[data-finder-result]");
+  if (finder && grid && result) {
+    const chips = [...finder.querySelectorAll<HTMLButtonElement>(".chip")];
+    const cards = [...grid.querySelectorAll<HTMLElement>("[data-slug]")];
+    const names = new Map(cards.map((c) => [c.dataset.slug!, c.querySelector(".svc-title")!.textContent!.trim()]));
+
+    const apply = (chip: HTMLButtonElement | null) => {
+      chips.forEach((c) => c.setAttribute("aria-pressed", String(c === chip)));
+      if (!chip) {
+        grid.removeAttribute("data-filter-active");
+        cards.forEach((c) => c.removeAttribute("data-match"));
+        result.textContent = "";
+        return;
+      }
+      const wanted = chip.dataset.services!.split(",");
+      grid.setAttribute("data-filter-active", "");
+      cards.forEach((c) => c.toggleAttribute("data-match", wanted.includes(c.dataset.slug!)));
+      result.innerHTML = "";
+      const label = document.createElement("span");
+      label.textContent = "Le recomendamos: ";
+      result.append(label);
+      wanted.forEach((slug, i) => {
+        const a = document.createElement("a");
+        a.href = `/servicios/${slug}/`;
+        a.textContent = names.get(slug) ?? slug;
+        result.append(a);
+        if (i < wanted.length - 1) result.append(document.createTextNode(" y "));
+      });
+      const first = grid.querySelector<HTMLElement>("[data-match]");
+      if (first && first.getBoundingClientRect().top > innerHeight * 0.85) {
+        first.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      }
+    };
+
+    chips.forEach((chip) =>
+      chip.addEventListener("click", () => apply(chip.getAttribute("aria-pressed") === "true" ? null : chip)),
+    );
+  }
+</script>
+
+<style>
+  .hero { position: relative; overflow: hidden; padding: clamp(2rem, 5vw, 3rem) 0 clamp(6rem, 11vw, 8rem); background: radial-gradient(80% 90% at 90% 10%, rgb(6 144 57 / 0.16), transparent 60%), var(--ink-950); }
+  .hero-grid { display: grid; gap: 2.5rem; margin-top: clamp(2rem, 5vw, 3.5rem); align-items: center; }
+  .hero h1 { font-size: clamp(2.3rem, 5.6vw, 4.2rem); max-width: 16ch; }
+  .hl { color: var(--green-400); }
+  .hero-lead { margin-top: 1.4rem; max-width: 36rem; color: var(--label-2); font-size: clamp(1.05rem, 1.5vw, 1.2rem); }
+  .hero :global(.hero-wave) { position: absolute; left: 0; right: 0; bottom: 0.5rem; opacity: 0.8; }
+
+  .jump { display: grid; gap: 0.5rem; }
+  .jump a {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    min-height: 60px;
+    padding: 0.7rem 1rem;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.05);
+    border: 1px solid rgb(255 255 255 / 0.08);
+    text-decoration: none;
+    transition: background-color 250ms var(--ease), transform 250ms var(--ease), border-color 250ms;
+  }
+  .jump a:hover { background: rgb(255 255 255 / 0.1); border-color: rgb(43 179 90 / 0.5); transform: translateX(4px); }
+  .jump-ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 11px; background: rgb(43 179 90 / 0.15); color: var(--green-400); flex: none; }
+  .jump-txt { display: grid; flex: 1; line-height: 1.25; }
+  .jump-txt strong { font-weight: 600; }
+  .jump-txt small { color: var(--label-3); font-size: 0.84rem; }
+  .jump :global(.jump-arrow) { color: var(--label-3); flex: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .jump a { animation: rise 700ms var(--ease) both; animation-delay: calc(150ms + var(--i) * 60ms); }
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+  @media (min-width: 980px) { .hero-grid { grid-template-columns: 1.15fr 0.85fr; gap: 4rem; } }
+
+  .js-only { display: none; }
+  :global(.js) .js-only { display: block; }
+  .finder {
+    margin: clamp(-6rem, -8vw, -4rem) 0 clamp(3rem, 7vw, 5rem);
+    position: relative;
+    z-index: 2;
+    padding: clamp(1.4rem, 3vw, 2rem);
+    background: var(--surface);
+    border: 1px solid var(--separator);
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow);
+  }
+  .finder-head { display: flex; gap: 1rem; align-items: center; margin-bottom: 1.25rem; }
+  .finder-head > div { min-width: 0; }
+  @media (max-width: 559px) { .finder-head .icon-badge { display: none; } }
+  .finder-title { font-size: clamp(1.35rem, 2.6vw, 1.7rem); }
+  .finder-head p { color: var(--label-2); font-size: 0.98rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .chip {
+    min-height: 44px;
+    padding: 0.55rem 1.05rem;
+    border-radius: 999px;
+    border: 1px solid var(--separator);
+    background: var(--surface-2);
+    color: var(--label);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 200ms var(--ease), color 200ms, border-color 200ms, transform 200ms var(--ease);
+  }
+  .chip:hover { border-color: var(--green-500); }
+  .chip:active { transform: scale(0.97); }
+  .chip[aria-pressed="true"] { background: var(--ink-900); border-color: var(--ink-900); color: #fff; }
+  @media (prefers-color-scheme: dark) { .chip[aria-pressed="true"] { background: var(--green-500); border-color: var(--green-500); color: var(--on-accent); } }
+  .finder-result { min-height: 1.6em; margin-top: 1rem; font-size: 0.98rem; color: var(--label-2); }
+  .finder-result :global(a) { color: var(--accent); font-weight: 600; }
+
+  .svc-grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+  .svc-help {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.9rem;
+    padding: 2rem 1.75rem;
+    background: linear-gradient(160deg, rgb(6 144 57 / 0.14), transparent 60%), var(--surface);
+  }
+  .svc-help .eyebrow { margin: 0; }
+  .svc-help p:not(.eyebrow) { color: var(--label-2); }
+  .svc-help .btn { align-self: flex-start; margin-top: 0.5rem; }
+
+  .comp-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); }
+  .comp { display: flex; flex-direction: column; gap: 0.8rem; padding: 1.6rem; text-decoration: none; transition: transform 350ms var(--ease), box-shadow 350ms var(--ease); }
+  a.comp:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .comp h3 { font-size: 1.2rem; }
+  .comp p { color: var(--label-2); font-size: 0.96rem; flex: 1; }
+
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); counter-reset: s; }
+  .steps li { position: relative; display: flex; flex-direction: column; gap: 0.75rem; padding: 1.75rem 1.5rem; background: var(--surface); border: 1px solid var(--separator); border-radius: var(--radius); }
+  .step-n { position: absolute; top: 1.25rem; right: 1.4rem; font-family: var(--font-display); font-weight: 700; font-size: 2.2rem; line-height: 1; color: var(--separator); -webkit-text-stroke: 1px var(--label-3); color: transparent; opacity: 0.5; }
+  .steps h3 { font-size: 1.2rem; }
+  .steps p { color: var(--label-2); font-size: 0.96rem; }
+
+  .faq-wrap { display: grid; gap: 1rem; }
+  @media (min-width: 980px) { .faq-wrap { grid-template-columns: 0.8fr 1.2fr; gap: 4rem; align-items: start; } }
+</style>

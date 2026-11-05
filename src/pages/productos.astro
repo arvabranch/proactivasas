@@ -1,0 +1,97 @@
+---
+import { Image } from "astro:assets";
+import Base from "../layouts/Base.astro";
+import PageHero from "../layouts/PageHero.astro";
+import Icon from "../components/Icon.astro";
+import CtaBand from "../components/CtaBand.astro";
+import { waLink } from "../data/site";
+import ventiladores from "../assets/img/servicios/ventiladores.jpg";
+import rotores from "../assets/img/servicios/rotores.jpg";
+import damper from "../assets/img/damper-persiana.png";
+import junta from "../assets/img/junta-flexible-rectangular.png";
+import accesorios from "../assets/img/accesorios-2.jpg";
+
+const capacidades = [
+  { t: "Seleccionamos", d: "y diseñamos cualquier tipo de ventilador según sus necesidades.", icon: "clipboard" },
+  { t: "Auditamos", d: "y ponemos en marcha cada ventilador bajo parámetros de vibración mínima.", icon: "gauge" },
+  { t: "Construimos", d: "rotores para cualquier aplicación bajo severas condiciones de operación: temperatura, gases y sólidos.", icon: "wrench" },
+];
+
+const productos = [
+  { n: "Ventiladores industriales", d: "Generales y heavy duty, centrífugos y axiales, diseñados para su proceso.", img: ventiladores, fit: "cover" },
+  { n: "Rotores de repuesto", d: "Para servicio severo: alta temperatura, gases y manejo de sólidos. Entregados balanceados.", img: rotores, fit: "cover" },
+  { n: "Damper tipo persiana", d: "Regulación y cierre de flujo de aire o gases en ductos.", img: damper, fit: "contain" },
+  { n: "Junta flexible rectangular", d: "Absorbe vibración, dilatación y desalineación entre ventilador y ducto.", img: junta, fit: "contain" },
+  { n: "Válvula rotativa (rotoesclusa)", d: "Dosificación y descarga de material granular manteniendo el sello del sistema.", img: accesorios, fit: "cover" },
+];
+---
+<Base
+  title="Ventiladores industriales, rotores y accesorios en Cali | Proactiva"
+  description="Fabricación de ventiladores industriales generales y heavy duty, rotores de repuesto, dampers tipo persiana, juntas flexibles y válvulas rotativas en Cali."
+  waMessage="Hola Proactiva, quisiera información sobre sus productos (ventiladores, rotores o accesorios)."
+>
+  <PageHero
+    crumb="Productos"
+    eyebrow="Fabricación propia"
+    title="Ventiladores industriales, rotores y accesorios"
+    lead="Desde 2019 fabricamos ventiladores industriales generales y heavy duty en Cali, con la experiencia en vibraciones y balanceo que nos respalda desde 1990."
+  />
+
+  <section class="section">
+    <div class="container">
+      <div class="caps">
+        {capacidades.map((c, i) => (
+          <div class="cap" data-reveal style={`--i:${i}`}>
+            <span class="icon-badge"><Icon name={c.icon} /></span>
+            <p><strong>{c.t}</strong> {c.d}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="prods">
+        {productos.map((p, i) => (
+          <article class="prod card" data-reveal style={`--i:${i % 3}`}>
+            <div class:list={["prod-img", { contain: p.fit === "contain" }]}>
+              <Image src={p.img} alt={p.n} widths={[320, 480, 640]} sizes="(min-width: 980px) 380px, (min-width: 640px) 45vw, 92vw" />
+            </div>
+            <div class="prod-body">
+              <h2>{p.n}</h2>
+              <p>{p.d}</p>
+              <a class="link-arrow" href={waLink(`Hola Proactiva, quisiera información sobre: ${p.n}.`)} target="_blank" rel="noopener" data-track="whatsapp_producto">
+                Más información <Icon name="arrow" />
+              </a>
+            </div>
+          </article>
+        ))}
+        <aside class="prod card catalog" data-reveal style="--i:2">
+          <span class="icon-badge"><Icon name="file" /></span>
+          <h2>Catálogo completo</h2>
+          <p>Solicite el catálogo de ventiladores y accesorios con fichas técnicas por WhatsApp.</p>
+          <a class="btn btn--primary" href={waLink("Hola Proactiva, quiero recibir el catálogo completo de productos.")} target="_blank" rel="noopener" data-track="whatsapp_catalogo">
+            <Icon name="whatsapp" /> Pedir catálogo
+          </a>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="¿Necesita un ventilador o un rotor?" text="Envíenos caudal, presión, temperatura y tipo de material a manejar. Le ayudamos a seleccionar el equipo adecuado." message="Hola Proactiva, necesito un ventilador o rotor para mi proceso." />
+</Base>
+
+<style>
+  .caps { display: grid; gap: 1rem; margin-bottom: clamp(2.5rem, 6vw, 4rem); grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+  .cap { display: flex; gap: 1rem; align-items: flex-start; }
+  .cap p { color: var(--label-2); }
+  .cap strong { color: var(--label); }
+  .prods { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+  .prod { overflow: hidden; display: flex; flex-direction: column; }
+  .prod-img { aspect-ratio: 16 / 11; background: var(--surface-2); overflow: hidden; }
+  .prod-img :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 700ms var(--ease); }
+  .prod-img.contain :global(img) { object-fit: contain; padding: 1.25rem; background: #fff; }
+  .prod:hover .prod-img :global(img) { transform: scale(1.04); }
+  .prod-body { display: flex; flex-direction: column; gap: 0.7rem; padding: 1.5rem; flex: 1; }
+  .prod h2 { font-size: 1.35rem; }
+  .prod p { color: var(--label-2); font-size: 0.97rem; flex: 1; }
+  .catalog { justify-content: center; gap: 0.9rem; padding: 2rem 1.75rem; background: linear-gradient(160deg, rgb(6 144 57 / 0.14), transparent 60%), var(--surface); }
+  .catalog .btn { align-self: flex-start; margin-top: 0.5rem; }
+</style>

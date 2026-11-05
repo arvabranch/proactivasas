@@ -1,0 +1,140 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHero from "../layouts/PageHero.astro";
+import Icon from "../components/Icon.astro";
+import { SITE, waLink } from "../data/site";
+import { SERVICIOS } from "../data/servicios";
+
+const canales = [
+  { icon: "whatsapp", t: "WhatsApp", v: "Respuesta más rápida", href: waLink(), ext: true },
+  { icon: "phone", t: "Teléfono", v: SITE.phoneDisplay, href: `tel:${SITE.phoneE164}` },
+  { icon: "mail", t: "Correo", v: SITE.email, href: `mailto:${SITE.email}` },
+  { icon: "pin", t: "Ubicación", v: `${SITE.city}, ${SITE.region}` },
+];
+---
+<Base
+  title="Contacto | Proactiva, mantenimiento industrial en Cali"
+  description={`Cotice balanceo, alineación láser, análisis de vibraciones, termografía o ventiladores industriales. WhatsApp y teléfono ${SITE.phoneDisplay}, Cali, Colombia.`}
+>
+  <PageHero
+    crumb="Contacto"
+    eyebrow="Contacto"
+    title="Hablemos de sus equipos"
+    lead="Cuéntenos qué necesita y le respondemos por WhatsApp. Si es una urgencia, llámenos directamente."
+  />
+
+  <section class="section">
+    <div class="container grid">
+      <div class="channels">
+        {canales.map((c, i) => {
+          const Tag = c.href ? "a" : "div";
+          return (
+            <Tag class="channel card" href={c.href} target={c.ext ? "_blank" : undefined} rel={c.ext ? "noopener" : undefined} data-reveal style={`--i:${i}`} data-track={c.ext ? "whatsapp_contacto_canal" : undefined}>
+              <span class:list={["icon-badge", { wa: c.icon === "whatsapp" }]}><Icon name={c.icon} /></span>
+              <span><strong>{c.t}</strong><span class="v">{c.v}</span></span>
+              {c.href && <Icon name="arrow" class="ch-arrow" />}
+            </Tag>
+          );
+        })}
+      </div>
+
+      <form class="form card" data-wa-form novalidate>
+        <h2>Escríbanos</h2>
+        <p class="form-intro">Déjenos sus datos y un especialista de nuestro equipo le responderá. Al enviar se abrirá WhatsApp con su mensaje listo; no almacenamos su información en este sitio.</p>
+
+        <div class="field">
+          <label for="f-nombre">Nombre</label>
+          <input id="f-nombre" name="nombre" autocomplete="name" required maxlength="80" />
+        </div>
+        <div class="field">
+          <label for="f-empresa">Empresa <span class="opt">(opcional)</span></label>
+          <input id="f-empresa" name="empresa" autocomplete="organization" maxlength="100" />
+        </div>
+        <div class="field">
+          <label for="f-servicio">Servicio de interés</label>
+          <div class="select">
+            <select id="f-servicio" name="servicio">
+              {SERVICIOS.map((s) => <option>{s.corto}</option>)}
+              <option>Productos (ventiladores, rotores, accesorios)</option>
+              <option>Programa de mantenimiento preventivo</option>
+              <option>No estoy seguro</option>
+            </select>
+            <Icon name="chevron" size={20} />
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-mensaje">¿Qué está pasando con su equipo?</label>
+          <textarea id="f-mensaje" name="mensaje" rows="4" required maxlength="1000" placeholder="Ej.: ventilador de 75 HP con vibración alta desde hace un mes"></textarea>
+        </div>
+        <p class="error" role="alert" data-error hidden>Por favor escriba su nombre y una breve descripción.</p>
+        <button class="btn btn--glass" type="submit"><Icon name="whatsapp" /> Enviar mensaje</button>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { SITE } from "../data/site";
+  const form = document.querySelector<HTMLFormElement>("[data-wa-form]")!;
+  const err = form.querySelector<HTMLElement>("[data-error]")!;
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const d = new FormData(form);
+    const val = (k: string) => String(d.get(k) ?? "").trim();
+    const nombre = val("nombre");
+    const mensaje = val("mensaje");
+    if (!nombre || !mensaje) {
+      err.hidden = false;
+      form.querySelector<HTMLElement>(nombre ? "#f-mensaje" : "#f-nombre")!.focus();
+      return;
+    }
+    err.hidden = true;
+    const empresa = val("empresa");
+    const text = [
+      `Hola Proactiva, soy ${nombre}${empresa ? ` de ${empresa}` : ""}.`,
+      `Servicio de interés: ${val("servicio")}.`,
+      mensaje,
+    ].join("\n");
+    (window as any).gtag?.("event", "contacto_whatsapp", { ubicacion: "formulario", pagina: location.pathname });
+    window.open(`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+  });
+</script>
+
+<style>
+  .grid { display: grid; gap: 2rem; align-items: start; }
+  @media (min-width: 980px) { .grid { grid-template-columns: 0.85fr 1.15fr; gap: 3rem; } }
+  .channels { display: grid; gap: 0.75rem; }
+  .channel { display: flex; align-items: center; gap: 1rem; padding: 1.15rem 1.25rem; text-decoration: none; transition: transform 300ms var(--ease), box-shadow 300ms var(--ease); }
+  a.channel:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .channel > span:nth-child(2) { display: grid; flex: 1; min-width: 0; }
+  .channel .v { color: var(--label-2); font-size: 0.95rem; overflow-wrap: anywhere; }
+  .channel :global(.ch-arrow) { color: var(--label-3); flex: none; }
+  .wa { background: #25d366; color: #062b14; }
+
+  .form { padding: clamp(1.5rem, 4vw, 2.5rem); display: grid; gap: 1.1rem; }
+  .form h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); }
+  .form-intro { color: var(--label-2); font-size: 0.95rem; margin-top: -0.4rem; }
+  .field { display: grid; gap: 0.4rem; }
+  label { font-weight: 600; font-size: 0.95rem; }
+  .opt { font-weight: 400; color: var(--label-3); }
+  input, textarea, select {
+    width: 100%;
+    min-height: 50px;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--separator);
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--label);
+    font: inherit;
+    font-size: 1rem;
+    transition: border-color 200ms, box-shadow 200ms;
+  }
+  textarea { resize: vertical; min-height: 120px; }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--green-500); box-shadow: 0 0 0 4px rgb(6 144 57 / 0.2); }
+  .select { position: relative; }
+  select { appearance: none; padding-right: 2.75rem; }
+  .select :global(svg) { position: absolute; right: 0.9rem; top: 50%; translate: 0 -50%; pointer-events: none; color: var(--label-3); }
+  .error { color: #c2410c; font-weight: 500; font-size: 0.95rem; }
+  .form .btn { justify-self: start; }
+  @media (max-width: 559px) { .form .btn { justify-self: stretch; } }
+</style>

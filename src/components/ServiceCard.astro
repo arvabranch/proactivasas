@@ -1,0 +1,62 @@
+---
+import { Image } from "astro:assets";
+import Icon from "./Icon.astro";
+import type { Servicio } from "../data/servicios";
+interface Props { s: Servicio; i?: number; headingLevel?: "h2" | "h3" }
+const { s, i = 0, headingLevel: H = "h3" } = Astro.props;
+---
+<article class="svc card" data-reveal style={`--i:${i}`} data-slug={s.slug}>
+  <div class="svc-media">
+    <Image src={s.hero} alt="" widths={[320, 480]} sizes="(min-width: 1000px) 380px, (min-width: 640px) 45vw, 92vw" loading="lazy" />
+    <span class="svc-dato"><strong>{s.dato.valor}</strong> {s.dato.etiqueta}</span>
+  </div>
+  <div class="svc-body">
+    <span class="icon-badge"><Icon name={s.icon} /></span>
+    <H class="svc-title">
+      <a href={`/servicios/${s.slug}/`} class="stretched">{s.corto}</a>
+    </H>
+    <p>{s.resumen}</p>
+    <span class="link-arrow" aria-hidden="true">Ver servicio <Icon name="arrow" /></span>
+  </div>
+</article>
+
+<style>
+  .svc {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 400ms var(--ease), box-shadow 400ms var(--ease), opacity 400ms var(--ease);
+  }
+  .svc:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
+  .svc:focus-within { box-shadow: 0 0 0 3px var(--focus); }
+  .svc-media { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--ink-800); }
+  .svc-media :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 700ms var(--ease); }
+  .svc:hover .svc-media :global(img) { transform: scale(1.05); }
+  .svc-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgb(7 16 23 / 0.65)); }
+  .svc-dato {
+    position: absolute;
+    z-index: 1;
+    left: 0.85rem;
+    top: 0.85rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    background: rgb(7 16 23 / 0.62);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    font-size: 0.8rem;
+  }
+  .svc-dato strong { font-family: var(--font-display); font-size: 0.95rem; margin-right: 0.25rem; color: var(--green-300); }
+  .svc-body { display: flex; flex-direction: column; gap: 0.85rem; padding: 1.5rem; flex: 1; }
+  .svc-body .icon-badge { margin-top: -2.9rem; position: relative; z-index: 2; background: var(--surface); box-shadow: var(--shadow-s); border: 1px solid var(--separator); }
+  .svc-title { font-size: 1.4rem; }
+  .svc-body p { color: var(--label-2); font-size: 0.98rem; flex: 1; }
+  .stretched { text-decoration: none; }
+  .stretched::after { content: ""; position: absolute; inset: 0; z-index: 3; }
+  .stretched:focus-visible { outline: none; }
+
+  /* Estados del selector de problemas (hub de servicios) */
+  :global([data-filter-active]) .svc:not([data-match]) { opacity: 0.38; transform: scale(0.98); }
+  :global([data-filter-active]) .svc[data-match] { box-shadow: 0 0 0 2px var(--green-500), var(--shadow); }
+</style>

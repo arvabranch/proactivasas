@@ -1,0 +1,48 @@
+---
+import Icon from "./Icon.astro";
+interface Props { items: { q: string; a: string }[] }
+const { items } = Astro.props;
+---
+<div class="faq">
+  {items.map((f, i) => (
+    <details class="faq-item" data-reveal style={`--i:${i}`}>
+      <summary>
+        <span>{f.q}</span>
+        <Icon name="chevron" size={22} />
+      </summary>
+      <div class="faq-a"><p>{f.a}</p></div>
+    </details>
+  ))}
+</div>
+
+<style>
+  .faq { display: grid; gap: 0.75rem; max-width: 52rem; }
+  .faq-item {
+    background: var(--surface);
+    border: 1px solid var(--separator);
+    border-radius: var(--radius);
+    transition: box-shadow var(--dur) var(--ease);
+  }
+  .faq-item[open] { box-shadow: var(--shadow-s); }
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.4rem;
+    min-height: 56px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary :global(svg) { flex: none; color: var(--label-3); transition: transform var(--dur) var(--ease); }
+  [open] summary :global(svg) { transform: rotate(180deg); }
+  .faq-a { padding: 0 1.4rem 1.3rem; color: var(--label-2); }
+  @supports (interpolate-size: allow-keywords) {
+    .faq-item { interpolate-size: allow-keywords; }
+    .faq-item::details-content { height: 0; overflow: clip; transition: height var(--dur) var(--ease), content-visibility var(--dur) allow-discrete; }
+    .faq-item[open]::details-content { height: auto; }
+  }
+</style>

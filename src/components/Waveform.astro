@@ -1,0 +1,39 @@
+---
+// Línea de vibración animada: el pulso del logo convertido en motivo visual (señal que se "lee" de izquierda a derecha).
+interface Props { class?: string }
+const { class: cls } = Astro.props;
+// Señal: ruido suave, un pico de falla y vuelta a la calma.
+const pts: string[] = [];
+for (let x = 0; x <= 1200; x += 8) {
+  const spike = Math.exp(-(((x - 760) / 26) ** 2));
+  const y =
+    60 +
+    Math.sin(x / 19) * 6 +
+    Math.sin(x / 7.3) * 3 +
+    spike * Math.sin(x / 3.1) * 46;
+  pts.push(`${x},${y.toFixed(1)}`);
+}
+const d = "M" + pts.join(" L");
+---
+<svg class:list={["wave", cls]} viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="wave-g" x1="0" x2="1">
+      <!-- Igual que el logo: línea verde→naranja que termina en el pulso rojo -->
+      <stop offset="0" stop-color="#2bb35a" stop-opacity="0" />
+      <stop offset="0.2" stop-color="#2bb35a" />
+      <stop offset="0.5" stop-color="#e88b03" />
+      <stop offset="0.6" stop-color="#d32311" />
+      <stop offset="0.68" stop-color="#d32311" />
+      <stop offset="0.76" stop-color="#e88b03" />
+      <stop offset="1" stop-color="#e88b03" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <path d={d} fill="none" stroke="url(#wave-g)" stroke-width="2.5" vector-effect="non-scaling-stroke" pathLength="1" />
+</svg>
+
+<style>
+  .wave { width: 100%; height: 120px; overflow: visible; }
+  path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 2.6s var(--ease) 0.3s forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { path { stroke-dashoffset: 0; animation: none; } }
+</style>

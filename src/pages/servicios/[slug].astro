@@ -1,0 +1,326 @@
+---
+import { Image } from "astro:assets";
+import Base from "../../layouts/Base.astro";
+import Icon from "../../components/Icon.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import Faq from "../../components/Faq.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import ServiceCard from "../../components/ServiceCard.astro";
+import { SITE, waLink } from "../../data/site";
+import { SERVICIOS, getServicio, type Servicio } from "../../data/servicios";
+
+export function getStaticPaths() {
+  return SERVICIOS.map((s) => ({ params: { slug: s.slug }, props: { s } }));
+}
+
+const { s } = Astro.props as { s: Servicio };
+const url = `${SITE.url}/servicios/${s.slug}/`;
+const relacionados = s.relacionados.map(getServicio).filter(Boolean) as Servicio[];
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: s.nombre,
+    serviceType: s.corto,
+    description: s.seoDescription,
+    url,
+    provider: { "@id": `${SITE.url}/#empresa` },
+    areaServed: { "@type": "City", name: SITE.city },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITE.url}/` },
+      { "@type": "ListItem", position: 2, name: "Servicios", item: `${SITE.url}/servicios/` },
+      { "@type": "ListItem", position: 3, name: s.corto, item: url },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: s.faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  },
+];
+---
+<Base title={s.seoTitle} description={s.seoDescription} image={s.hero} schema={schema} waMessage={s.mensajeWa}>
+  <!-- HERO -->
+  <section class="hero dark" aria-labelledby="page-title">
+    <div class="container">
+      <Breadcrumbs items={[{ label: "Inicio", href: "/" }, { label: "Servicios", href: "/servicios/" }, { label: s.corto }]} />
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow"><Icon name={s.icon} size={18} /> Servicio en {SITE.city}</p>
+          <h1 id="page-title">{s.nombre}</h1>
+          <p class="hero-lead">{s.lead}</p>
+          <div class="btn-row">
+            <a class="btn btn--glass" href={waLink(s.mensajeWa)} target="_blank" rel="noopener" data-track={`whatsapp_${s.slug}_hero`}>
+              <Icon name="whatsapp" /> Contáctenos
+            </a>
+            <a class="btn btn--ghost" href={`tel:${SITE.phoneE164}`}><Icon name="phone" /> Llamar</a>
+          </div>
+        </div>
+        <div class="hero-media">
+          <Image src={s.hero} alt={s.galeria[0].alt} widths={[320, 480, 640]} sizes="(min-width: 980px) 420px, 92vw" loading="eager" fetchpriority="high" />
+          <div class="hero-dato">
+            <strong>{s.dato.valor}</strong>
+            <span>{s.dato.etiqueta}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN NAV -->
+  <nav class="subnav" aria-label="En esta página">
+    <div class="container">
+      <ul>
+        <li><a href="#que-es">Qué es</a></li>
+        <li><a href="#sintomas">Cuándo lo necesita</a></li>
+        <li><a href="#incluye">Qué incluye</a></li>
+        <li><a href="#proceso">Proceso</a></li>
+        <li><a href="#preguntas">Preguntas</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- QUÉ ES -->
+  <section class="section" id="que-es" aria-labelledby="que-es-t">
+    <div class="container intro">
+      <div>
+        <p class="eyebrow">Qué es</p>
+        <h2 id="que-es-t">{s.corto}: qué hacemos y por qué importa</h2>
+        {s.queEs.map((p) => <p class="body">{p}</p>)}
+      </div>
+      <aside class="benef card" data-reveal>
+        <h3>Beneficios para su planta</h3>
+        <ul class="check-list">
+          {s.beneficios.map((b) => <li><Icon name="check" />{b}</li>)}
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <!-- SÍNTOMAS -->
+  <section class="section section--alt" id="sintomas" aria-labelledby="sintomas-t">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Cuándo lo necesita</p>
+        <h2 id="sintomas-t">Señales de que su equipo necesita este servicio</h2>
+      </div>
+      <ul class="symptoms">
+        {s.sintomas.map((x, i) => (
+          <li data-reveal style={`--i:${i}`}><span class="dot" aria-hidden="true"></span>{x}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- INCLUYE -->
+  <section class="section" id="incluye" aria-labelledby="incluye-t">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Qué incluye</p>
+        <h2 id="incluye-t">Un servicio completo, de la medición al informe</h2>
+      </div>
+      <div class="inc-grid">
+        {s.incluye.map((x, i) => (
+          <article class="inc card" data-reveal style={`--i:${i}`}>
+            <span class="inc-n">{String(i + 1).padStart(2, "0")}</span>
+            <h3>{x.titulo}</h3>
+            <p>{x.texto}</p>
+          </article>
+        ))}
+      </div>
+
+      {s.galeria.length > 1 && (
+        <div class="gallery">
+          {s.galeria.map((g, i) => (
+            <figure data-reveal style={`--i:${i}`}>
+              <Image src={g.src} alt={g.alt} widths={[320, 480, 800]} sizes="(min-width: 860px) 33vw, 92vw" />
+            </figure>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- PROCESO -->
+  <section class="section dark" id="proceso" aria-labelledby="proceso-t">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Proceso</p>
+        <h2 id="proceso-t">Así lo hacemos</h2>
+      </div>
+      <ol class="timeline">
+        {s.proceso.map((p, i) => (
+          <li data-reveal style={`--i:${i}`}>
+            <span class="tl-n">{i + 1}</span>
+            <div><h3>{p.titulo}</h3><p>{p.texto}</p></div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="preguntas" aria-labelledby="faq-t">
+    <div class="container faq-wrap">
+      <div class="section-head">
+        <p class="eyebrow">Preguntas frecuentes</p>
+        <h2 id="faq-t">Sobre {s.corto.toLowerCase()}</h2>
+      </div>
+      <Faq items={s.faq} />
+    </div>
+  </section>
+
+  <CtaBand
+    title={`¿Necesita ${s.corto.toLowerCase()}?`}
+    text="Envíenos los datos del equipo por WhatsApp (tipo, potencia, velocidad y síntomas) y un especialista le responde con una recomendación técnica."
+    message={s.mensajeWa}
+  />
+
+  <!-- RELACIONADOS -->
+  <section class="section section--alt" aria-labelledby="rel-t">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">También le puede servir</p>
+        <h2 id="rel-t">Servicios relacionados</h2>
+      </div>
+      <div class="rel-grid">
+        {relacionados.map((r, i) => <ServiceCard s={r} i={i} />)}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { padding: clamp(2rem, 5vw, 3rem) 0 clamp(3rem, 7vw, 5rem); background: radial-gradient(70% 90% at 100% 0%, rgb(6 144 57 / 0.16), transparent 60%), var(--ink-950); }
+  .hero-grid { display: grid; gap: 2.5rem; margin-top: clamp(1.75rem, 4vw, 3rem); align-items: center; }
+  .hero h1 { font-size: clamp(2.2rem, 5.2vw, 3.9rem); max-width: 18ch; }
+  .hero-lead { margin: 1.25rem 0 2rem; max-width: 36rem; color: var(--label-2); font-size: clamp(1.06rem, 1.5vw, 1.22rem); }
+  .eyebrow :global(svg) { width: 18px; height: 18px; }
+  .hero .eyebrow::before { display: none; }
+  .hero-media { position: relative; }
+  .hero-media :global(img) { width: 100%; aspect-ratio: 4 / 4.2; object-fit: cover; border-radius: var(--radius-l); box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.6); }
+  .hero-dato {
+    position: absolute;
+    left: -0.75rem;
+    bottom: 1.25rem;
+    display: grid;
+    padding: 0.9rem 1.2rem;
+    border-radius: var(--radius);
+    background: rgb(12 25 34 / 0.75);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgb(255 255 255 / 0.12);
+  }
+  .hero-dato strong { font-family: var(--font-display); font-size: 1.8rem; line-height: 1; color: var(--green-300); }
+  .hero-dato span { font-size: 0.85rem; color: var(--label-2); }
+  @media (min-width: 980px) {
+    .hero-grid { grid-template-columns: 1.3fr 0.7fr; gap: 4rem; }
+    .hero-dato { left: -2rem; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-copy > * { animation: rise 800ms var(--ease) both; }
+    .hero-copy > :nth-child(2) { animation-delay: 70ms; }
+    .hero-copy > :nth-child(3) { animation-delay: 140ms; }
+    .hero-copy > :nth-child(4) { animation-delay: 210ms; }
+    .hero-media { animation: rise 1000ms var(--ease) 150ms both; }
+  }
+  @keyframes rise { from { transform: translateY(16px); } }
+
+  .subnav {
+    position: sticky;
+    top: var(--header-h);
+    z-index: 30;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--separator);
+  }
+  .subnav ul { display: flex; gap: 0.25rem; list-style: none; margin: 0; padding: 0.5rem 0; overflow-x: auto; scrollbar-width: none; }
+  .subnav ul::-webkit-scrollbar { display: none; }
+  .subnav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 0.9rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--label-2);
+    text-decoration: none;
+  }
+  .subnav a:hover, .subnav a.is-current { background: var(--surface-2); color: var(--label); }
+
+  .intro { display: grid; gap: 2.5rem; align-items: start; }
+  .intro h2 { margin-bottom: 1.25rem; }
+  .body { color: var(--label-2); font-size: 1.1rem; max-width: 42rem; }
+  .body + .body { margin-top: 1rem; }
+  .benef { padding: 1.75rem; }
+  .benef h3 { margin-bottom: 1.25rem; }
+  @media (min-width: 980px) { .intro { grid-template-columns: 1.4fr 1fr; gap: 4rem; } .benef { position: sticky; top: calc(var(--header-h) + 5rem); } }
+
+  .symptoms { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+  .symptoms li {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1.15rem 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--separator);
+    border-radius: var(--radius);
+    font-weight: 500;
+  }
+  .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--orange-500); box-shadow: 0 0 0 5px rgb(232 139 3 / 0.18); }
+  @media (prefers-reduced-motion: no-preference) {
+    .dot { animation: pulse 2.4s ease-in-out infinite; }
+  }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 9px rgb(232 139 3 / 0); } }
+
+  .inc-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); }
+  .inc { padding: 1.6rem; display: grid; gap: 0.6rem; align-content: start; }
+  .inc-n { font-family: var(--font-display); font-weight: 700; color: var(--accent); font-size: 0.95rem; letter-spacing: 0.08em; }
+  .inc h3 { font-size: 1.2rem; }
+  .inc p { color: var(--label-2); font-size: 0.97rem; }
+
+  .gallery { display: grid; gap: 1rem; margin-top: 2.5rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+  .gallery figure { margin: 0; overflow: hidden; border-radius: var(--radius); }
+  .gallery :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; transition: transform 700ms var(--ease); }
+  .gallery figure:hover :global(img) { transform: scale(1.04); }
+
+  .timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+  .timeline li { position: relative; display: grid; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--separator); }
+  .timeline li::before { content: ""; position: absolute; top: -1px; left: 0; width: 48px; height: 2px; background: var(--green-400); }
+  .tl-n { font-family: var(--font-display); font-weight: 700; font-size: 2.6rem; line-height: 1; color: var(--green-400); }
+  .timeline h3 { font-size: 1.25rem; margin-bottom: 0.35rem; }
+  .timeline p { color: var(--label-2); font-size: 0.97rem; }
+
+  .faq-wrap { display: grid; gap: 1rem; }
+  @media (min-width: 980px) { .faq-wrap { grid-template-columns: 0.8fr 1.2fr; gap: 4rem; align-items: start; } }
+
+  .rel-grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+</style>
+
+<script>
+  // Resalta la sección actual en la sub-navegación
+  const links = [...document.querySelectorAll<HTMLAnchorElement>(".subnav a")];
+  const map = new Map(links.map((a) => [a.hash.slice(1), a]));
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          links.forEach((l) => l.classList.remove("is-current"));
+          const a = map.get(e.target.id);
+          a?.classList.add("is-current");
+          if (a) a.closest("ul")!.scrollTo({ left: a.offsetLeft - 16, behavior: "smooth" });
+        }
+      }
+    },
+    { rootMargin: "-40% 0px -55% 0px" },
+  );
+  map.forEach((_, id) => { const el = document.getElementById(id); if (el) io.observe(el); });
+</script>

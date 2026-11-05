@@ -1,0 +1,48 @@
+---
+import Icon from "./Icon.astro";
+import Waveform from "./Waveform.astro";
+import { SITE, waLink } from "../data/site";
+interface Props {
+  title?: string;
+  text?: string;
+  message?: string;
+}
+const {
+  title = "¿Su equipo está dando señales?",
+  text = "Cuéntenos qué está pasando. Un especialista le responde por WhatsApp con una recomendación técnica.",
+  message,
+} = Astro.props;
+---
+<section class="cta-wrap section--tight" aria-labelledby="cta-title">
+  <div class="container">
+    <div class="cta dark" data-reveal>
+      <Waveform class="cta-wave" />
+      <div class="cta-body">
+        <h2 id="cta-title">{title}</h2>
+        <p>{text}</p>
+        <div class="btn-row">
+          <a class="btn btn--glass" href={waLink(message)} target="_blank" rel="noopener" data-track="whatsapp_cta">
+            <Icon name="whatsapp" /> Escríbanos
+          </a>
+          <a class="btn btn--ghost" href={`tel:${SITE.phoneE164}`}><Icon name="phone" /> {SITE.phoneDisplay}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(2.5rem, 6vw, 4.5rem);
+    border-radius: var(--radius-l);
+    background:
+      radial-gradient(120% 120% at 100% 0%, rgb(6 144 57 / 0.22), transparent 55%),
+      var(--ink-900);
+  }
+  .cta-body { position: relative; max-width: 40rem; }
+  .cta h2 { font-size: clamp(1.9rem, 4.2vw, 3rem); }
+  .cta p { margin: 1rem 0 2rem; color: var(--label-2); font-size: 1.12rem; }
+  .cta :global(.cta-wave) { position: absolute; inset: auto 0 6% 0; opacity: 0.55; }
+</style>

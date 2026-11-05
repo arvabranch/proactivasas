@@ -1,0 +1,64 @@
+---
+// Acceso permanente a WhatsApp: barra inferior en celular, botón flotante en escritorio.
+import Icon from "./Icon.astro";
+import { SITE, waLink } from "../data/site";
+interface Props { message?: string }
+const href = waLink(Astro.props.message);
+---
+<div class="dock" role="region" aria-label="Contacto rápido">
+  <a class="dock-call" href={`tel:${SITE.phoneE164}`} aria-label={`Llamar al ${SITE.phoneDisplay}`}>
+    <Icon name="phone" size={22} />
+  </a>
+  <a class="dock-wa btn--glass" href={href} target="_blank" rel="noopener" data-track="whatsapp_dock">
+    <Icon name="whatsapp" size={22} /> <span>Escríbanos</span>
+  </a>
+</div>
+
+<style>
+  .dock {
+    position: fixed;
+    z-index: 40;
+    inset: auto 0 0 0;
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.65rem var(--gutter) calc(0.65rem + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(18px);
+    backdrop-filter: saturate(180%) blur(18px);
+    border-top: 1px solid var(--separator);
+  }
+  .dock a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 50px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .dock-call {
+    width: 50px;
+    flex: none;
+    border: 1px solid var(--separator);
+    background: var(--surface);
+    color: var(--label);
+  }
+  .dock-wa { flex: 1; }
+
+  @media (min-width: 860px) {
+    .dock {
+      inset: auto 1.5rem 1.5rem auto;
+      padding: 0;
+      background: none;
+      border: 0;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+    .dock .dock-call { display: none; }
+    .dock-wa {
+      padding: 0 1.4rem 0 1.15rem;
+      min-height: 56px;
+    }
+  }
+</style>

@@ -1,0 +1,29 @@
+---
+// Logo oficial de IP Proactiva S.A.S. (PNG transparente generado con scripts/prepare-logo.mjs).
+import { Image } from "astro:assets";
+import logo from "../assets/brand/logo-proactiva.png";
+
+interface Props {
+  /** Alto en píxeles CSS del logo */
+  height?: number;
+  class?: string;
+  eager?: boolean;
+}
+const { height = 44, class: cls, eager = true } = Astro.props;
+const width = Math.round((logo.width / logo.height) * height);
+---
+<Image
+  src={logo}
+  alt="IP Proactiva S.A.S. · Preventivo, predictivo, proactivo"
+  width={width}
+  height={height}
+  densities={[1, 2, 3]}
+  format="webp"
+  quality={90}
+  loading={eager ? "eager" : "lazy"}
+  class:list={["logo", cls]}
+/>
+
+<style>
+  .logo { display: block; width: auto; height: var(--logo-h, auto); max-width: 100%; }
+</style>
